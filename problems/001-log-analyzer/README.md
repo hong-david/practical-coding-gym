@@ -314,36 +314,6 @@ Keep the implementation simple.
 
 ---
 
-## Git Workflow
-
-Recommended branch:
-
-```bash
-git checkout main
-git pull
-git checkout -b solve-001-log-analyzer
-```
-
-Useful commands:
-
-```bash
-git status
-git diff
-git add problems/001-log-analyzer
-git diff --staged
-git commit -m "Implement log analyzer MVP"
-```
-
-Push when ready:
-
-```bash
-git push -u origin solve-001-log-analyzer
-```
-
-Open a PR and send the PR URL for review.
-
----
-
 ## PR Review Checklist
 
 Review should check:
