@@ -19,7 +19,6 @@ Each problem is designed to start with a simple MVP, then expand into realistic 
 ```txt
 practical-coding-gym/
     README.md
-    PRACTICE_GUIDE.md
     requirements.txt
     scripts/
         test-problem.sh
@@ -38,3 +37,6 @@ Use the generic test script (tests all) or add provided/custom flag:
 
 ```bash
 ./scripts/test-problem.sh <problem-folder>
+./scripts/test-problem.sh <problem-folder> provided
+./scripts/test-problem.sh <problem-folder> custom
+```
