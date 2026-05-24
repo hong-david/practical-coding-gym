@@ -30,7 +30,7 @@ practical-coding-gym/
             tests/
                 provided/
                 custom/
-
+```
 ## Running Tests
 
 Use the generic test script (tests all) or add provided/custom flag:
