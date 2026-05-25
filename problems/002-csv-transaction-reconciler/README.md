@@ -84,11 +84,121 @@ Both APIs return the same result shape:
 }
 ```
 
+Normalized transaction records in result lists should keep the source ID and normalized comparable fields:
+
+```python
+# internal record
+{
+    "transaction_id": "int-1",
+    "date": "2026-05-01",
+    "amount": "10.00",
+    "currency": "USD",
+    "description": "coffee",
+    "line_number": 2,
+}
+
+# provider record
+{
+    "provider_id": "prov-1",
+    "date": "2026-05-01",
+    "amount": "10.00",
+    "currency": "USD",
+    "description": "coffee",
+    "line_number": 2,
+}
+```
+
+Use string amounts in returned dictionaries to avoid exposing binary floating-point artifacts. Internally, compare amounts with `Decimal`.
+
+Counting rules:
+
+- `internal_count` and `provider_count` count parsed, non-malformed transaction rows, including duplicates.
+- blank lines do not count as parsed or malformed rows.
+- malformed rows count only in `malformed_internal_count` or `malformed_provider_count`.
+- duplicates are still included in `internal_count` or `provider_count`.
+- duplicate rows should also appear in the relevant duplicate list.
+
+For amount mismatches, compare records by normalized date, currency, and description when no exact amount match exists. Put those records in `amount_mismatches`, not in both missing buckets.
+
 `reconcile_transactions(...)` parses and reconciles CSV text directly.
 
 `reconcile_transaction_files(...)` reads both files, raises a clear `FileNotFoundError` if either path is missing, and otherwise returns the same dictionary shape as `reconcile_transactions(...)`.
 
 The provided tests require the top-level keys and summary counts above. The exact fields inside list entries can be richer, but they should include enough source record detail to debug why each row landed in that bucket.
+
+Example:
+
+```python
+internal_csv = """transaction_id,date,amount,currency,description
+int-1,2026-05-01,10.00,USD,Coffee
+int-2,2026-05-02,25.50,USD,Lunch
+"""
+
+provider_csv = """provider_id,date,amount,currency,description
+prov-1,2026-05-01,10.00,USD,Coffee
+prov-2,2026-05-02,25.50,USD,Lunch
+"""
+
+reconcile_transactions(internal_csv, provider_csv) == {
+    "matched": [
+        {
+            "internal": {
+                "transaction_id": "int-1",
+                "date": "2026-05-01",
+                "amount": "10.00",
+                "currency": "USD",
+                "description": "coffee",
+                "line_number": 2,
+            },
+            "provider": {
+                "provider_id": "prov-1",
+                "date": "2026-05-01",
+                "amount": "10.00",
+                "currency": "USD",
+                "description": "coffee",
+                "line_number": 2,
+            },
+        },
+        {
+            "internal": {
+                "transaction_id": "int-2",
+                "date": "2026-05-02",
+                "amount": "25.50",
+                "currency": "USD",
+                "description": "lunch",
+                "line_number": 3,
+            },
+            "provider": {
+                "provider_id": "prov-2",
+                "date": "2026-05-02",
+                "amount": "25.50",
+                "currency": "USD",
+                "description": "lunch",
+                "line_number": 3,
+            },
+        },
+    ],
+    "missing_from_provider": [],
+    "missing_from_internal": [],
+    "amount_mismatches": [],
+    "duplicate_internal": [],
+    "duplicate_provider": [],
+    "malformed_internal": [],
+    "malformed_provider": [],
+    "summary": {
+        "internal_count": 2,
+        "provider_count": 2,
+        "matched_count": 2,
+        "missing_from_provider_count": 0,
+        "missing_from_internal_count": 0,
+        "amount_mismatch_count": 0,
+        "duplicate_internal_count": 0,
+        "duplicate_provider_count": 0,
+        "malformed_internal_count": 0,
+        "malformed_provider_count": 0,
+    },
+}
+```
 
 ## Level 1 MVP
 
