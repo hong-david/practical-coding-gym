@@ -26,7 +26,61 @@ class ThreadSafeLedger:
 
 ## Input/output shape
 
-Balances should be exact Decimal-compatible values. Mutating operations return dictionaries describing the operation and resulting balances. `snapshot()` returns a copy of all balances and should not expose mutable internal state.
+Accounts are addressed by caller-provided string IDs. Balances should be exact Decimal-compatible values.
+
+`create_account(account_id, initial_balance=0)` returns:
+
+```python
+{
+    "account_id": "a",
+    "balance": Decimal("10.00"),
+}
+```
+
+`deposit(...)` and `withdraw(...)` return operation dictionaries with the resulting balance:
+
+```python
+{
+    "account_id": "a",
+    "amount": Decimal("1.00"),
+    "balance": Decimal("11.00"),
+}
+```
+
+`transfer(from_account_id, to_account_id, amount)` returns:
+
+```python
+{
+    "from_account_id": "a",
+    "to_account_id": "b",
+    "amount": Decimal("3.00"),
+    "from_balance": Decimal("7.00"),
+    "to_balance": Decimal("4.00"),
+}
+```
+
+`get_balance(account_id)` returns a `Decimal`.
+
+`snapshot()` returns a copy of all balances:
+
+```python
+{
+    "a": Decimal("7.00"),
+    "b": Decimal("4.00"),
+}
+```
+
+Expected errors:
+
+- duplicate account IDs raise `ValueError`
+- blank account IDs raise `ValueError`
+- negative initial balances raise `ValueError`
+- non-positive deposit/withdraw/transfer amounts raise `ValueError`
+- missing accounts raise `KeyError`
+- insufficient funds raise `ValueError`
+- transferring to the same account raises `ValueError`
+
+Concurrent operations must preserve total balances and avoid deadlocks.
 
 ## Level 1 MVP
 

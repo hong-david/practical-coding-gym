@@ -29,7 +29,59 @@ class InMemoryTaskStore:
 
 ## Input/output shape
 
-The app should expose JSON routes for `/health`, `/projects`, `/projects/<id>/tasks`, and `/tasks/<id>`. Successful responses are JSON objects or arrays. Error responses should be JSON with an `error` key and appropriate HTTP status codes.
+The app exposes JSON routes:
+
+```txt
+GET    /health
+GET    /projects
+POST   /projects
+GET    /projects/<project_id>/tasks
+POST   /projects/<project_id>/tasks
+PATCH  /tasks/<task_id>
+DELETE /tasks/<task_id>
+```
+
+Project shape:
+
+```python
+{
+    "id": 1,
+    "name": "Platform",
+}
+```
+
+Task shape:
+
+```python
+{
+    "id": 1,
+    "project_id": 1,
+    "title": "Ship feature",
+    "status": "todo",  # todo, in_progress, done
+}
+```
+
+Response expectations:
+
+- `GET /health` returns `200` and `{"status": "ok"}`
+- `POST /projects` returns `201` and one project
+- `GET /projects` returns project dictionaries in creation order
+- `POST /projects/<id>/tasks` returns `201` and one task
+- `GET /projects/<id>/tasks` returns task dictionaries, optionally filtered by `?status=done`
+- `PATCH /tasks/<id>` returns `200` and the updated task
+- `DELETE /tasks/<id>` returns `204` with no body
+
+Error responses must be JSON dictionaries with an `error` key:
+
+```python
+{"error": "message"}
+```
+
+Expected status codes:
+
+- invalid JSON or validation errors return `400`
+- missing projects/tasks return `404`
+- unsupported methods return `405` with JSON error shape
 
 ## Level 1 MVP
 

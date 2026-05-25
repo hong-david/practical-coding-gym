@@ -19,7 +19,55 @@ class SearchService with add_document and search.
 
 ## Input/output shape
 
-Documents have IDs, title, body, and tags. Search returns ranked dictionaries including doc_id, title, and score. Duplicate IDs update existing docs.
+Documents are added with:
+
+```python
+add_document(doc_id="1", title="Python Guide", body="Learn testing", tags=["python"])
+```
+
+Stored document shape:
+
+```python
+{
+    "doc_id": "1",
+    "title": "Python Guide",
+    "body": "Learn testing",
+    "tags": ["python"],
+}
+```
+
+`search(query, tags=None, limit=10, offset=0)` returns ranked result dictionaries:
+
+```python
+[
+    {
+        "doc_id": "1",
+        "title": "Python Guide",
+        "score": 3,
+    },
+]
+```
+
+Ranking rules:
+
+- token matching is case-insensitive
+- title matches score higher than body matches
+- documents matching more query terms rank higher
+- ties are resolved by insertion order
+- tag filters require all requested tags
+
+Behavior:
+
+- empty or blank queries return `[]`
+- duplicate `doc_id` updates the existing document
+- returned result dictionaries must not expose mutable internal state
+
+Expected errors:
+
+- blank document IDs raise `ValueError`
+- documents with both blank title and blank body raise `ValueError`
+- non-positive `limit` raises `ValueError`
+- negative `offset` raises `ValueError`
 
 ## Level 1 MVP
 

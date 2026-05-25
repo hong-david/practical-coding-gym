@@ -19,7 +19,44 @@ class AuthTaskService with register_user, login, authenticated CRUD methods.
 
 ## Input/output shape
 
-Emails are normalized. Login returns tokens. Task IDs are global and tasks include owner_id. Users can only access their own tasks.
+Users returned from `register_user(...)` are dictionaries without plaintext passwords:
+
+```python
+{
+    "id": 1,
+    "email": "user@example.com",
+}
+```
+
+`login(email, password)` returns an opaque token string:
+
+```python
+"token-value"
+```
+
+Task IDs are global across all users. Task dictionaries include an owner:
+
+```python
+{
+    "id": 1,
+    "owner_id": 1,
+    "title": "Buy milk",
+    "description": "",
+}
+```
+
+`create_task(...)`, `get_task(...)`, and `update_task(...)` return one task dictionary. `list_tasks(token)` returns only the authenticated user's task dictionaries. `delete_task(...)` returns `True` when an owned task is deleted.
+
+Expected errors:
+
+- duplicate normalized emails raise `ValueError`
+- blank email or password raises `ValueError`
+- invalid login credentials raise `PermissionError`
+- invalid tokens raise `PermissionError`
+- cross-user read/update/delete attempts raise `PermissionError`
+- blank task titles raise `ValueError`
+
+Returned user/task dictionaries must not expose mutable internal state.
 
 ## Level 1 MVP
 

@@ -27,7 +27,54 @@ class ScheduledWorker:
 
 ## Input/output shape
 
-Jobs include `id`, `job_type`, `payload`, `run_at`, `timeout_seconds`, `attempts`, `status`, `last_error`, and timestamps. `run_due` returns completed, retried, timed-out, or dead-lettered job records.
+The fake clock must expose:
+
+```python
+clock.now() -> number
+```
+
+Jobs are dictionaries:
+
+```python
+{
+    "id": 1,
+    "job_type": "email",
+    "payload": {"to": "a@example.com"},
+    "run_at": 100.0,
+    "timeout_seconds": 30,
+    "attempts": 0,
+    "status": "queued",  # queued, running, completed, retry_scheduled, cancelled, dead_lettered
+    "last_error": None,
+    "created_at": 0.0,
+    "updated_at": 0.0,
+}
+```
+
+`enqueue_at(...)` and `enqueue_in(...)` return queued job dictionaries.
+
+`run_due(handlers)` runs due, non-cancelled jobs in scheduled order. Jobs with the same `run_at` run FIFO. `handlers` maps job type strings to callables:
+
+```python
+{"email": lambda payload: "sent"}
+```
+
+`run_due(...)` returns job records for jobs it processed. Successful jobs are marked `completed`. Failed jobs are marked `retry_scheduled` until `max_attempts` is reached, then moved to dead letters.
+
+`cancel(job_id)` returns `True` when a queued job is cancelled and `False` for unknown jobs.
+
+`get_job(job_id)` returns one job dictionary. `dead_letters()` returns a copy of dead-lettered job dictionaries.
+
+Expected errors:
+
+- non-positive `max_attempts` raises `ValueError`
+- clock without `now()` raises `TypeError`
+- blank job types raise `ValueError`
+- non-dictionary payloads raise `TypeError`
+- negative delays raise `ValueError`
+- non-positive timeouts raise `ValueError`
+- unknown job IDs in `get_job(...)` raise `KeyError`
+
+Timeout failures are represented with `JobTimeoutError`.
 
 ## Level 1 MVP
 

@@ -33,7 +33,52 @@ class LedgerService:
 
 ## Input/output shape
 
-Accounts include `id`, `name`, `currency`, `balance`, `created_at`, and `updated_at`. Transfers include `id`, account IDs, decimal amount, idempotency key, and timestamp. Balances must be stored and compared as exact decimal values, not floats.
+Accounts are dictionaries:
+
+```python
+{
+    "id": 1,
+    "name": "Cash",
+    "currency": "USD",
+    "balance": Decimal("0.00"),
+    "created_at": "...",
+    "updated_at": "...",
+}
+```
+
+Transfers are dictionaries:
+
+```python
+{
+    "id": 1,
+    "from_account_id": 1,
+    "to_account_id": 2,
+    "amount": Decimal("10.25"),
+    "idempotency_key": "tx-1",
+    "created_at": "...",
+}
+```
+
+`create_account(...)` and `get_account(...)` return account dictionaries. `list_accounts()` returns accounts in creation order. `get_balance(account_id)` returns a `Decimal`. `record_transfer(...)` returns a transfer dictionary. `list_transactions(account_id=None)` returns transfer dictionaries, optionally filtered by either source or destination account.
+
+Migration behavior:
+
+- `initialize_database(db_path)` creates the database and applies bundled migrations
+- `apply_migrations(db_path, migrations_dir)` records applied migration filenames in `schema_migrations`
+- applying migrations multiple times is safe
+- failed migrations raise `MigrationError`
+
+Expected errors:
+
+- missing migrations directory raises `FileNotFoundError`
+- blank account names/currencies raise `ValueError`
+- duplicate account name/currency pairs raise `ValueError`
+- missing accounts raise `KeyError`
+- zero/negative transfer amounts raise `ValueError`
+- same-account transfers raise `ValueError`
+- idempotency key conflicts raise `ValueError`
+
+Balances must be stored and compared as exact decimal values, not floats. Failed transfers must not partially update balances.
 
 ## Level 1 MVP
 

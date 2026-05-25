@@ -25,7 +25,46 @@ write_summary(input_path: str, output_path: str) -> dict
 
 ## Input/output shape
 
-Input is newline-delimited JSON. Each valid event has `event_id`, `timestamp`, `user_id`, `event_type`, and optional `value`. Summaries include total line counts, valid/malformed counts, counts by event type/user, revenue totals, duplicate IDs, and checkpoints when requested.
+Input is newline-delimited JSON. Each valid event has:
+
+```python
+{
+    "event_id": "e1",
+    "timestamp": "2026-05-01T10:00:00Z",
+    "user_id": "u1",
+    "event_type": "purchase",
+    "value": "12.50",  # optional, defaults to zero-like behavior
+}
+```
+
+`parse_event_line(line)` returns one event dictionary and raises `ValueError` for malformed JSON or missing required fields.
+
+`iter_events(lines)` is lazy. It yields parsed event dictionaries from an iterable of lines and ignores blank lines.
+
+`summarize_event_stream(lines, checkpoint_every=None)` returns:
+
+```python
+{
+    "total_lines": 0,
+    "valid_lines": 0,
+    "malformed_lines": 0,
+    "event_types": {"view": 2, "purchase": 1},
+    "users": {"u1": 2},
+    "revenue": Decimal("12.50"),
+    "duplicate_event_ids": ["e1"],
+    "checkpoints": [1000, 2000],
+}
+```
+
+Revenue is counted only for non-duplicate `purchase` events. Duplicate events still count as valid lines, but should not double-count revenue.
+
+`write_summary(input_path, output_path)` streams from a file, writes a JSON summary file, and returns the same summary dictionary it writes.
+
+Expected errors:
+
+- malformed event lines increment `malformed_lines` in summaries
+- non-positive checkpoint intervals raise `ValueError`
+- missing input files raise `FileNotFoundError`
 
 ## Level 1 MVP
 

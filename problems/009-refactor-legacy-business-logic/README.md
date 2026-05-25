@@ -19,7 +19,45 @@ calculate_price(plan, users, coupon=None, renewing=False) -> float
 
 ## Input/output shape
 
-Plans are free, starter, pro, and enterprise. Coupons and renewal rules adjust final price.
+`calculate_price(plan, users, coupon=None, renewing=False)` returns the final price as a two-decimal numeric value:
+
+```python
+calculate_price("starter", 1) == 19
+calculate_price("pro", 1, "SAVE10", True) == 41.9
+```
+
+Supported plans and base prices:
+
+```python
+{
+    "free": 0,
+    "starter": 19,
+    "pro": 49,
+    "enterprise": 199,
+}
+```
+
+For paid plans, each additional user after the first adds `5`.
+
+Supported coupons:
+
+```python
+{
+    "SAVE10": "10 percent off",
+    "HALF": "50 percent off",
+    "ANNUAL20": "20 percent off new feature",
+}
+```
+
+Unknown coupons are ignored for legacy compatibility. Renewal discounts apply only to `pro` and `enterprise` plans. Coupon discounts are applied before renewal discounts.
+
+Expected errors:
+
+- unknown plan names raise `ValueError`
+- zero or negative users raise `ValueError`
+- plan names are case-sensitive
+
+The starter implementation is ugly and mostly working, but it does not yet satisfy the new feature/user validation tests.
 
 ## Level 1 MVP
 

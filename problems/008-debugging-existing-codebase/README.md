@@ -20,7 +20,55 @@ refund_order(order: dict, inventory: dict) -> bool
 
 ## Input/output shape
 
-Orders contain items with sku, quantity, and unit_price. Inventory maps SKU to available quantity.
+Orders are dictionaries:
+
+```python
+{
+    "items": [
+        {"sku": "sku-1", "quantity": 2, "unit_price": 10.00},
+    ],
+    "discount": 2,  # optional fixed amount
+}
+```
+
+Percentage discounts are represented as:
+
+```python
+{"discount": {"type": "percent", "value": 10}}
+```
+
+Inventory maps SKU strings to available quantities:
+
+```python
+{
+    "sku-1": 5,
+    "sku-2": 0,
+}
+```
+
+`process_order(order, inventory)` returns:
+
+```python
+{
+    "subtotal": 20.00,
+    "tax": 2.00,
+    "total": 22.00,
+}
+```
+
+and decrements inventory by each ordered quantity only if the full order succeeds.
+
+`refund_order(order, inventory)` returns `True` and restores inventory by each item quantity.
+
+Expected errors:
+
+- missing `items` raises `ValueError`
+- missing or insufficient inventory raises `ValueError`
+- non-positive quantity raises `ValueError`
+- negative prices raise `ValueError`
+- refunding an unknown SKU raises `KeyError`
+
+Money values should be rounded to two decimal places. The starter implementation intentionally violates several of these rules.
 
 ## Level 1 MVP
 

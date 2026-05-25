@@ -19,7 +19,35 @@ class FixedWindowRateLimiter with __init__ and allow. Optional TokenBucketRateLi
 
 ## Input/output shape
 
-allow returns True for accepted requests and False when a user exceeds the current fixed window.
+The fake clock must expose:
+
+```python
+clock.now() -> number
+```
+
+`FixedWindowRateLimiter(limit, window_seconds, clock)` tracks accepted requests per user in fixed epoch-aligned windows.
+
+`allow(user_id)` returns a boolean:
+
+```python
+True   # request accepted
+False  # user exceeded the limit in the current window
+```
+
+Behavior:
+
+- each user has an independent counter
+- exactly `limit` requests are allowed per window
+- the next request in the same window returns `False`
+- counters reset when `clock.now()` moves into a new window
+- blocked requests do not block other users
+
+Expected errors:
+
+- non-positive `limit` raises `ValueError`
+- non-positive `window_seconds` raises `ValueError`
+- missing `clock.now` raises `TypeError`
+- blank user IDs raise `ValueError`
 
 ## Level 1 MVP
 

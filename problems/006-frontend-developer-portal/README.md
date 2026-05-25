@@ -19,7 +19,50 @@ login, auth_headers, create_initial_state, reducer, fetch_all_pages, update_reso
 
 ## Input/output shape
 
-State tracks token, loading, error, apps, resources, and users. Fake API objects expose get/post/patch.
+State dictionaries have this shape:
+
+```python
+{
+    "token": None,
+    "loading": False,
+    "error": None,
+    "apps": [],
+    "resources": [],
+    "users": [],
+}
+```
+
+Fake API objects expose:
+
+```python
+api.post(path: str, payload: dict, headers: dict | None = None) -> dict
+api.get(path: str, headers: dict | None = None) -> dict
+api.patch(path: str, payload: dict, headers: dict | None = None) -> dict
+```
+
+`login(api, email, password)` returns the API login response, expected to include a token:
+
+```python
+{"token": "token-value"}
+```
+
+`auth_headers(token)` returns:
+
+```python
+{"Authorization": "Bearer token-value"}
+```
+
+`fetch_all_pages(api, path)` expects paginated responses:
+
+```python
+{"items": [{...}], "next_page": "/next-page-or-null"}
+```
+
+and returns one flat list of item dictionaries.
+
+`update_resource(api, token, resource_id, updates)` returns the API patch response dictionary.
+
+`reducer(state, action)` returns a new state dictionary and must not mutate the input state. Unknown action types raise `ValueError`.
 
 ## Level 1 MVP
 

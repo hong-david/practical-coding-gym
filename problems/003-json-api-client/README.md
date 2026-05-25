@@ -22,7 +22,45 @@ class APIClient:
 
 ## Input/output shape
 
-Transport `.get(endpoint)` returns `{ "items": [...], "next_page": "/api/items?page=2" }`.
+The injected transport must expose:
+
+```python
+transport.get(endpoint: str) -> dict
+```
+
+Paginated list responses must look like:
+
+```python
+{
+    "items": [
+        {"id": "item-1", ...},
+    ],
+    "next_page": "/api/items?page=2",  # or None
+}
+```
+
+`fetch_all_items(endpoint)` returns a flat list of item dictionaries in the same order the API returns them across pages:
+
+```python
+[
+    {"id": "item-1", ...},
+    {"id": "item-2", ...},
+]
+```
+
+`fetch_item(endpoint, item_id)` returns the first item dictionary whose `id` equals `item_id`, searching later pages as needed:
+
+```python
+{"id": "item-2", ...}
+```
+
+Expected errors:
+
+- malformed response shape raises `BadResponseError`
+- exhausted transient retries raise `APIClientError`
+- permanent errors such as non-retryable 4xx errors are not retried
+- missing item raises a clear `APIClientError`
+- invalid constructor arguments raise `TypeError` or `ValueError`
 
 ## Level 1 MVP
 

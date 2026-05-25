@@ -19,7 +19,39 @@ async def run_tasks(tasks, concurrency_limit: int) -> list
 
 ## Input/output shape
 
-Tasks is an iterable of callables returning awaitables. Results preserve input order and failures are captured clearly.
+`tasks` is an iterable of callables. Each callable must return an awaitable:
+
+```python
+async def work():
+    return "done"
+
+tasks = [lambda: work()]
+```
+
+`run_tasks(tasks, concurrency_limit)` returns a list with one result slot per input task, preserving input order:
+
+```python
+["first-result", "second-result"]
+```
+
+Concurrency behavior:
+
+- at most `concurrency_limit` tasks may be running at once
+- a larger limit than the number of tasks is allowed
+- the input task collection must not be mutated
+
+Failure behavior:
+
+- coroutine exceptions are captured clearly in the corresponding result slot
+- synchronous exceptions raised while creating a coroutine are captured clearly
+- cancellation should be represented clearly in the corresponding result slot
+
+Expected errors:
+
+- non-positive concurrency limits raise `ValueError`
+- `tasks=None` raises `TypeError`
+- non-callable tasks raise `TypeError`
+- callables that do not return awaitables raise `TypeError`
 
 ## Level 1 MVP
 

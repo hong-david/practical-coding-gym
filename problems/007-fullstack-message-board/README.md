@@ -19,7 +19,51 @@ class MessageBoard with create_user, create_post, list_posts, add_comment, delet
 
 ## Input/output shape
 
-Users, posts, and comments are dictionaries with generated IDs. Owners can delete their own posts/comments.
+Users are dictionaries:
+
+```python
+{
+    "id": 1,
+    "username": "alice",
+}
+```
+
+Posts are dictionaries:
+
+```python
+{
+    "id": 1,
+    "user_id": 1,
+    "title": "Hello",
+    "body": "Post body",
+    "comments": [],
+    "created_at": "...",
+}
+```
+
+Comments are dictionaries:
+
+```python
+{
+    "id": 1,
+    "post_id": 1,
+    "user_id": 1,
+    "body": "Nice post",
+    "created_at": "...",
+}
+```
+
+`create_user(...)`, `create_post(...)`, and `add_comment(...)` return the created dictionary. `list_posts(limit=20, offset=0)` returns post dictionaries newest-first. `delete_post(...)` and `delete_comment(...)` return `True` when deletion succeeds.
+
+Expected errors:
+
+- blank usernames, titles, bodies, or comments raise `ValueError`
+- duplicate usernames raise `ValueError`
+- missing users/posts/comments raise `KeyError`
+- deleting another user's post/comment raises `PermissionError`
+- invalid pagination values raise `ValueError`
+
+Returned dictionaries/lists must be copies, not references to internal state.
 
 ## Level 1 MVP
 

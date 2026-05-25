@@ -19,7 +19,36 @@ class LRUCache with __init__, get, and put.
 
 ## Input/output shape
 
-get returns value or None. put inserts or updates and evicts least recently used keys.
+`LRUCache(capacity)` creates an empty cache with a positive maximum size.
+
+```python
+cache = LRUCache(2)
+```
+
+`put(key, value)` inserts or updates a key and returns `None`:
+
+```python
+cache.put("a", 1) is None
+```
+
+`get(key)` returns the stored value or `None` when the key is missing:
+
+```python
+cache.get("a") == 1
+cache.get("missing") is None
+```
+
+Recency rules:
+
+- `get(existing_key)` makes that key most recently used
+- `put(existing_key, value)` updates the value and makes that key most recently used
+- inserting beyond capacity evicts the least recently used key
+
+Falsey values such as `None`, `False`, and `0` can be stored. In this lab, `None` is also the missing-key sentinel, so callers cannot distinguish stored `None` from missing by return value alone.
+
+Expected errors:
+
+- zero or negative capacity raises `ValueError`
 
 ## Level 1 MVP
 

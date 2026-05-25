@@ -19,7 +19,39 @@ class JobQueue with enqueue, reserve_next, complete, fail, dead_letters.
 
 ## Input/output shape
 
-Jobs have IDs, statuses, attempt counts, payloads, and failure reasons. Failed jobs retry up to max_attempts then move to dead letters.
+Jobs are dictionaries:
+
+```python
+{
+    "id": 1,
+    "job_type": "email",
+    "payload": {"to": "a@example.com"},
+    "status": "queued",  # queued, running, completed, retry_scheduled, dead_lettered
+    "attempts": 0,
+    "last_error": None,
+}
+```
+
+`enqueue(job_type, payload)` returns the queued job dictionary.
+
+`reserve_next()` returns the next queued job in FIFO order, marks it `running`, increments `attempts`, and returns `None` when no queued jobs are available.
+
+`complete(job_id)` returns `None` and marks a running job completed.
+
+`fail(job_id, reason)` returns `None`. Failed jobs are requeued until `max_attempts` is reached; after that they move to the dead-letter list.
+
+`dead_letters()` returns a copy of dead-lettered job dictionaries.
+
+Expected errors:
+
+- non-positive `max_attempts` raises `ValueError`
+- blank job type raises `ValueError`
+- non-dictionary payload raises `TypeError`
+- completing/failing unknown jobs raises `KeyError`
+- completing the same job twice raises `ValueError`
+- blank failure reasons raise `ValueError`
+
+Payloads and returned job dictionaries should be copies where mutation would otherwise leak into internal state.
 
 ## Level 1 MVP
 

@@ -32,7 +32,80 @@ renderCart({ root, store, api })
 
 ## Input/output shape
 
-Cart state includes `items`, `loading`, `error`, `saving`, and `lastSavedAt`. Items include `id`, `name`, `price`, and `quantity`. The DOM component should render cart rows, totals, quantity controls, loading/error states, and accessible buttons.
+Cart state shape:
+
+```javascript
+{
+  items: [],
+  loading: false,
+  error: null,
+  saving: false,
+  lastSavedAt: null
+}
+```
+
+Cart item shape:
+
+```javascript
+{
+  id: "sku-1",
+  name: "Keyboard",
+  price: "99.99",
+  quantity: 1
+}
+```
+
+`createCartStore(initialState)` returns a store object:
+
+```javascript
+{
+  getState: Function,
+  dispatch: Function,
+  subscribe: Function
+}
+```
+
+`cartReducer(state, action)` returns a new state object and must not mutate the input state.
+
+Supported action types include:
+
+```javascript
+"load_started"
+"load_succeeded"
+"load_failed"
+"quantity_changed"
+"remove_item"
+"save_started"
+"save_succeeded"
+"save_failed"
+```
+
+`calculateTotals(items)` returns:
+
+```javascript
+{
+  itemCount: 2,
+  subtotal: "20.00"
+}
+```
+
+`loadCart(api, store)` expects `api.fetchCart()` to resolve to `{ items: [...] }`, dispatches loading actions, and rejects while storing a readable error on failure.
+
+`saveCart(api, store)` expects `api.saveCart(state)` to resolve to `{ savedAt: "..." }` and stores `lastSavedAt`.
+
+`renderCart({ root, store, api })` renders into the provided DOM root. It should render empty, loading, error, item rows, totals, and accessible quantity buttons such as:
+
+```html
+<button aria-label="Increase Keyboard quantity">...</button>
+```
+
+Expected errors:
+
+- invalid quantities raise errors
+- negative prices raise errors
+- unknown reducer actions raise errors
+
+Buttons should be disabled while saving.
 
 ## Level 1 MVP
 

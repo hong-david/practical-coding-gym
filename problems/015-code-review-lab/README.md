@@ -22,7 +22,44 @@ summarize_orders(orders: list[dict]) -> dict
 
 ## Input/output shape
 
-Orders contain customer, quantity, price, and status. The submitted solution returns totals by customer but has realistic flaws.
+Orders are dictionaries:
+
+```python
+{
+    "customer": "Acme",
+    "quantity": 2,
+    "price": 5.00,
+    "status": "paid",  # paid or cancelled
+}
+```
+
+The intended output shape for `summarize_orders(orders)` is:
+
+```python
+{
+    "total": 10.00,
+    "customers": {
+        "Acme": 10.00,
+    },
+    "count": 1,
+}
+```
+
+Intended behavior:
+
+- cancelled orders do not contribute to total, customer totals, or count
+- customer names are trimmed
+- money totals should avoid floating-point precision surprises
+- input orders should not be mutated
+
+Expected errors:
+
+- missing `customer`, `quantity`, `price`, or `status` raises `ValueError`
+- blank customer names raise `ValueError`
+- negative quantity or price raises `ValueError`
+- unknown status values raise `ValueError`
+
+The submitted solution intentionally violates several of these rules. The main exercise is to write a review document that identifies the flaws and recommends changes.
 
 ## Level 1 MVP
 
