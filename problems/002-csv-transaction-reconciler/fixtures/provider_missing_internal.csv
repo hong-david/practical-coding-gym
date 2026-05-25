@@ -1,0 +1,3 @@
+provider_id,date,amount,currency,description
+prov-1,2026-05-01,10.00,USD,Coffee
+prov-3,2026-05-04,12.00,USD,Taxi
