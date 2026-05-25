@@ -54,6 +54,21 @@ Expected errors:
 - unknown fields in `update_task(...)` raise `ValueError`
 - missing tasks for `get_task(...)` or `update_task(...)` raise `KeyError`
 
+Example expected behavior:
+
+```python
+service = TaskService()
+
+created = service.create_task("Buy milk")
+created["id"] == 1
+created["status"] == "todo"
+
+service.update_task(1, status="done")["status"] == "done"
+service.list_tasks(status="done") == [service.get_task(1)]
+service.delete_task(1) is True
+service.delete_task(1) is False
+```
+
 ## Level 1 MVP
 
 Create, retrieve, list, update, and delete tasks in memory.

@@ -53,6 +53,26 @@ Expected errors:
 
 Payloads and returned job dictionaries should be copies where mutation would otherwise leak into internal state.
 
+Example expected behavior:
+
+```python
+queue = JobQueue(max_attempts=2)
+
+job = queue.enqueue("email", {"to": "a@example.com"})
+job["status"] == "queued"
+
+reserved = queue.reserve_next()
+reserved["id"] == job["id"]
+reserved["status"] == "running"
+reserved["attempts"] == 1
+
+queue.fail(job["id"], "temporary outage")
+queue.reserve_next()["id"] == job["id"]
+
+queue.complete(job["id"]) is None
+queue.reserve_next() is None
+```
+
 ## Level 1 MVP
 
 Enqueue, reserve FIFO, complete, and retry failures.

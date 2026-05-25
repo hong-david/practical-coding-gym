@@ -58,6 +58,24 @@ Expected errors:
 
 Returned user/task dictionaries must not expose mutable internal state.
 
+Example expected behavior:
+
+```python
+service = AuthTaskService()
+
+alice = service.register_user("Alice@Example.com", "secret")
+token = service.login("alice@example.com", "secret")
+
+task = service.create_task(token, "Ship feature")
+task["owner_id"] == alice["id"]
+
+service.list_tasks(token) == [task]
+
+bob = service.register_user("bob@example.com", "secret")
+bob_token = service.login("bob@example.com", "secret")
+service.get_task(bob_token, task["id"])  # raises PermissionError
+```
+
 ## Level 1 MVP
 
 Register, login, create/list/get/update/delete owned tasks.

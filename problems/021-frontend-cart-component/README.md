@@ -107,6 +107,36 @@ Expected errors:
 
 Buttons should be disabled while saving.
 
+Example expected behavior:
+
+```javascript
+const store = createCartStore({
+  items: [
+    { id: "sku-1", name: "Keyboard", price: "99.99", quantity: 1 }
+  ],
+  loading: false,
+  error: null,
+  saving: false,
+  lastSavedAt: null
+});
+
+expect(calculateTotals(store.getState().items)).toEqual({
+  itemCount: 1,
+  subtotal: "99.99"
+});
+
+store.dispatch({
+  type: "quantity_changed",
+  itemId: "sku-1",
+  quantity: 2
+});
+
+expect(calculateTotals(store.getState().items)).toEqual({
+  itemCount: 2,
+  subtotal: "199.98"
+});
+```
+
 ## Level 1 MVP
 
 Implement reducer-driven cart state, render items into the DOM, calculate totals, and handle quantity updates.

@@ -80,6 +80,28 @@ Expected errors:
 
 Balances must be stored and compared as exact decimal values, not floats. Failed transfers must not partially update balances.
 
+Example expected behavior:
+
+```python
+initialize_database("ledger.sqlite3")
+ledger = LedgerService("ledger.sqlite3")
+
+source = ledger.create_account("Source", "usd")
+target = ledger.create_account("Target", "USD")
+
+transfer = ledger.record_transfer(
+    source["id"],
+    target["id"],
+    Decimal("10.25"),
+    idempotency_key="tx-1",
+)
+
+ledger.get_balance(source["id"]) == Decimal("-10.25")
+ledger.get_balance(target["id"]) == Decimal("10.25")
+
+ledger.record_transfer(source["id"], target["id"], Decimal("10.25"), "tx-1") == transfer
+```
+
 ## Level 1 MVP
 
 Create the SQLite schema, run migrations once, create accounts, list accounts, and return balances.

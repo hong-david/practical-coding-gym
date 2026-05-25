@@ -66,6 +66,27 @@ Expected errors:
 - non-positive checkpoint intervals raise `ValueError`
 - missing input files raise `FileNotFoundError`
 
+Example expected behavior:
+
+```python
+lines = [
+    '{"event_id":"e1","timestamp":"2026-05-01T10:00:00Z","user_id":"u1","event_type":"view"}',
+    '{"event_id":"e2","timestamp":"2026-05-01T10:00:01Z","user_id":"u1","event_type":"purchase","value":"12.50"}',
+    "not-json",
+]
+
+summarize_event_stream(lines) == {
+    "total_lines": 3,
+    "valid_lines": 2,
+    "malformed_lines": 1,
+    "event_types": {"view": 1, "purchase": 1},
+    "users": {"u1": 2},
+    "revenue": Decimal("12.50"),
+    "duplicate_event_ids": [],
+    "checkpoints": [],
+}
+```
+
 ## Level 1 MVP
 
 Parse event lines lazily, ignore blank lines, count valid events by type, and return a summary dictionary.

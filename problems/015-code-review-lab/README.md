@@ -61,6 +61,23 @@ Expected errors:
 
 The submitted solution intentionally violates several of these rules. The main exercise is to write a review document that identifies the flaws and recommends changes.
 
+Example expected behavior:
+
+```python
+orders = [
+    {"customer": " Acme ", "quantity": 2, "price": 5.00, "status": "paid"},
+    {"customer": "Acme", "quantity": 1, "price": 5.00, "status": "cancelled"},
+]
+
+summarize_orders(orders) == {
+    "total": 10.00,
+    "customers": {"Acme": 10.00},
+    "count": 1,
+}
+
+orders[0]  # should not be mutated
+```
+
 ## Level 1 MVP
 
 Read the fake PR, inspect the code, run tests, and write review.md with findings.

@@ -53,6 +53,23 @@ Expected errors:
 - non-callable tasks raise `TypeError`
 - callables that do not return awaitables raise `TypeError`
 
+Example expected behavior:
+
+```python
+async def first():
+    return "a"
+
+async def second():
+    return "b"
+
+results = await run_tasks(
+    [lambda: first(), lambda: second()],
+    concurrency_limit=2,
+)
+
+results == ["a", "b"]
+```
+
 ## Level 1 MVP
 
 Run tasks with at most N active tasks.

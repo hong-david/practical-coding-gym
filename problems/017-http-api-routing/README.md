@@ -83,6 +83,29 @@ Expected status codes:
 - missing projects/tasks return `404`
 - unsupported methods return `405` with JSON error shape
 
+Example expected behavior:
+
+```python
+app = create_app()
+client = app.test_client()
+
+client.get("/health").get_json() == {"status": "ok"}
+
+project_response = client.post("/projects", json={"name": "Platform"})
+project_response.status_code == 201
+project = project_response.get_json()
+
+task_response = client.post(
+    f"/projects/{project['id']}/tasks",
+    json={"title": "Ship API", "status": "todo"},
+)
+task_response.status_code == 201
+
+client.get(f"/projects/{project['id']}/tasks?status=todo").get_json() == [
+    task_response.get_json()
+]
+```
+
 ## Level 1 MVP
 
 Implement an app factory, health route, project creation/listing, task creation/listing, task update, and task deletion.

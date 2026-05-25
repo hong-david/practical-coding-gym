@@ -70,6 +70,29 @@ Expected errors:
 
 Money values should be rounded to two decimal places. The starter implementation intentionally violates several of these rules.
 
+Example expected behavior:
+
+```python
+inventory = {"sku-1": 5}
+order = {
+    "items": [
+        {"sku": "sku-1", "quantity": 3, "unit_price": 10.00},
+    ],
+    "discount": {"type": "percent", "value": 10},
+}
+
+process_order(order, inventory) == {
+    "subtotal": 27.00,
+    "tax": 2.70,
+    "total": 29.70,
+}
+
+inventory == {"sku-1": 2}
+
+refund_order(order, inventory) is True
+inventory == {"sku-1": 5}
+```
+
 ## Level 1 MVP
 
 Read failing tests and fix the smallest set of bugs.

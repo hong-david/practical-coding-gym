@@ -62,6 +62,24 @@ Expected errors:
 - missing item raises a clear `APIClientError`
 - invalid constructor arguments raise `TypeError` or `ValueError`
 
+Example expected behavior:
+
+```python
+transport = FakeTransport([
+    {"items": [{"id": "a"}], "next_page": "/items?page=2"},
+    {"items": [{"id": "b"}], "next_page": None},
+])
+
+client = APIClient(transport)
+
+client.fetch_all_items("/items") == [
+    {"id": "a"},
+    {"id": "b"},
+]
+
+transport.calls == ["/items", "/items?page=2"]
+```
+
 ## Level 1 MVP
 
 Fetch all pages until next_page is None and preserve order.

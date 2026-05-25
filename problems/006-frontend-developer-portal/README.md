@@ -64,6 +64,24 @@ and returns one flat list of item dictionaries.
 
 `reducer(state, action)` returns a new state dictionary and must not mutate the input state. Unknown action types raise `ValueError`.
 
+Example expected behavior:
+
+```python
+state = create_initial_state()
+state["loading"] is False
+
+loading_state = reducer(state, {"type": "login_started"})
+loading_state["loading"] is True
+state["loading"] is False  # original state was not mutated
+
+auth_headers("abc") == {"Authorization": "Bearer abc"}
+
+fetch_all_pages(api, "/apps") == [
+    {"id": "app-1"},
+    {"id": "app-2"},
+]
+```
+
 ## Level 1 MVP
 
 Implement login, token use, state reducer, pagination, and resource updates.
