@@ -19,7 +19,7 @@ class JobQueue with enqueue, reserve_next, complete, fail, dead_letters.
 
 ## Input/output shape
 
-Jobs are dictionaries:
+Jobs are dictionaries with these minimum fields:
 
 ```python
 {

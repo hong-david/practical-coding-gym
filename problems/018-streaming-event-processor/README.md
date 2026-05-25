@@ -41,7 +41,7 @@ Input is newline-delimited JSON. Each valid event has:
 
 `iter_events(lines)` is lazy. It yields parsed event dictionaries from an iterable of lines and ignores blank lines.
 
-`summarize_event_stream(lines, checkpoint_every=None)` returns:
+`summarize_event_stream(lines, checkpoint_every=None)` returns a compact summary:
 
 ```python
 {
@@ -75,16 +75,14 @@ lines = [
     "not-json",
 ]
 
-summarize_event_stream(lines) == {
-    "total_lines": 3,
-    "valid_lines": 2,
-    "malformed_lines": 1,
-    "event_types": {"view": 1, "purchase": 1},
-    "users": {"u1": 2},
-    "revenue": Decimal("12.50"),
-    "duplicate_event_ids": [],
-    "checkpoints": [],
-}
+summary = summarize_event_stream(lines)
+
+summary["total_lines"] == 3
+summary["valid_lines"] == 2
+summary["malformed_lines"] == 1
+summary["event_types"] == {"view": 1, "purchase": 1}
+summary["users"] == {"u1": 2}
+summary["revenue"] == Decimal("12.50")
 ```
 
 ## Level 1 MVP

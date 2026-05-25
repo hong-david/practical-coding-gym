@@ -19,7 +19,7 @@ class TaskService with create_task, get_task, list_tasks, update_task, delete_ta
 
 ## Input/output shape
 
-Tasks are dictionaries:
+Tasks are dictionaries with these minimum fields:
 
 ```python
 {
@@ -64,7 +64,7 @@ created["id"] == 1
 created["status"] == "todo"
 
 service.update_task(1, status="done")["status"] == "done"
-service.list_tasks(status="done") == [service.get_task(1)]
+service.list_tasks(status="done")[0]["id"] == 1
 service.delete_task(1) is True
 service.delete_task(1) is False
 ```

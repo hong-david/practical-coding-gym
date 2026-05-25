@@ -19,7 +19,7 @@ class AuthTaskService with register_user, login, authenticated CRUD methods.
 
 ## Input/output shape
 
-Users returned from `register_user(...)` are dictionaries without plaintext passwords:
+Users returned from `register_user(...)` are dictionaries with these minimum fields and no plaintext passwords:
 
 ```python
 {
@@ -34,7 +34,7 @@ Users returned from `register_user(...)` are dictionaries without plaintext pass
 "token-value"
 ```
 
-Task IDs are global across all users. Task dictionaries include an owner:
+Task IDs are global across all users. Task dictionaries include these minimum fields:
 
 ```python
 {
@@ -69,7 +69,7 @@ token = service.login("alice@example.com", "secret")
 task = service.create_task(token, "Ship feature")
 task["owner_id"] == alice["id"]
 
-service.list_tasks(token) == [task]
+service.list_tasks(token)[0]["id"] == task["id"]
 
 bob = service.register_user("bob@example.com", "secret")
 bob_token = service.login("bob@example.com", "secret")

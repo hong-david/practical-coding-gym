@@ -46,7 +46,7 @@ Inventory maps SKU strings to available quantities:
 }
 ```
 
-`process_order(order, inventory)` returns:
+`process_order(order, inventory)` returns a compact money summary:
 
 ```python
 {
@@ -81,11 +81,11 @@ order = {
     "discount": {"type": "percent", "value": 10},
 }
 
-process_order(order, inventory) == {
-    "subtotal": 27.00,
-    "tax": 2.70,
-    "total": 29.70,
-}
+result = process_order(order, inventory)
+
+result["subtotal"] == 27.00
+result["tax"] == 2.70
+result["total"] == 29.70
 
 inventory == {"sku-1": 2}
 

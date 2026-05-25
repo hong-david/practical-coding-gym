@@ -28,7 +28,7 @@ class ThreadSafeLedger:
 
 Accounts are addressed by caller-provided string IDs. Balances should be exact Decimal-compatible values.
 
-`create_account(account_id, initial_balance=0)` returns:
+`create_account(account_id, initial_balance=0)` returns a compact account dictionary:
 
 ```python
 {
@@ -37,7 +37,7 @@ Accounts are addressed by caller-provided string IDs. Balances should be exact D
 }
 ```
 
-`deposit(...)` and `withdraw(...)` return operation dictionaries with the resulting balance:
+`deposit(...)` and `withdraw(...)` return compact operation dictionaries with the resulting balance:
 
 ```python
 {
@@ -47,7 +47,7 @@ Accounts are addressed by caller-provided string IDs. Balances should be exact D
 }
 ```
 
-`transfer(from_account_id, to_account_id, amount)` returns:
+`transfer(from_account_id, to_account_id, amount)` returns a compact transfer result:
 
 ```python
 {
@@ -89,18 +89,13 @@ ledger = ThreadSafeLedger()
 ledger.create_account("a", Decimal("100.00"))
 ledger.create_account("b", Decimal("25.00"))
 
-ledger.transfer("a", "b", Decimal("10.00")) == {
-    "from_account_id": "a",
-    "to_account_id": "b",
-    "amount": Decimal("10.00"),
-    "from_balance": Decimal("90.00"),
-    "to_balance": Decimal("35.00"),
-}
+transfer = ledger.transfer("a", "b", Decimal("10.00"))
 
-ledger.snapshot() == {
-    "a": Decimal("90.00"),
-    "b": Decimal("35.00"),
-}
+transfer["from_balance"] == Decimal("90.00")
+transfer["to_balance"] == Decimal("35.00")
+
+ledger.snapshot()["a"] == Decimal("90.00")
+ledger.snapshot()["b"] == Decimal("35.00")
 ```
 
 ## Level 1 MVP

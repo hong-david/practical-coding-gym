@@ -25,7 +25,7 @@ Documents are added with:
 add_document(doc_id="1", title="Python Guide", body="Learn testing", tags=["python"])
 ```
 
-Stored document shape:
+Stored documents have these minimum fields:
 
 ```python
 {
@@ -36,7 +36,7 @@ Stored document shape:
 }
 ```
 
-`search(query, tags=None, limit=10, offset=0)` returns ranked result dictionaries:
+`search(query, tags=None, limit=10, offset=0)` returns compact ranked result dictionaries:
 
 ```python
 [
@@ -78,13 +78,9 @@ search.add_document("2", "Testing", "Python pytest tips", tags=["python", "testi
 
 results = search.search("python", tags=["testing"])
 
-results == [
-    {
-        "doc_id": "2",
-        "title": "Testing",
-        "score": 2,
-    },
-]
+results[0]["doc_id"] == "2"
+results[0]["title"] == "Testing"
+results[0]["score"] > 0
 ```
 
 ## Level 1 MVP

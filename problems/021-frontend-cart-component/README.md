@@ -32,7 +32,7 @@ renderCart({ root, store, api })
 
 ## Input/output shape
 
-Cart state shape:
+Cart state has these minimum fields:
 
 ```javascript
 {
@@ -44,7 +44,7 @@ Cart state shape:
 }
 ```
 
-Cart item shape:
+Cart items have these minimum fields:
 
 ```javascript
 {

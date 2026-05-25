@@ -19,7 +19,7 @@ class MessageBoard with create_user, create_post, list_posts, add_comment, delet
 
 ## Input/output shape
 
-Users are dictionaries:
+Users are dictionaries with these minimum fields:
 
 ```python
 {
@@ -28,7 +28,7 @@ Users are dictionaries:
 }
 ```
 
-Posts are dictionaries:
+Posts are dictionaries with these minimum fields:
 
 ```python
 {
@@ -41,7 +41,7 @@ Posts are dictionaries:
 }
 ```
 
-Comments are dictionaries:
+Comments are dictionaries with these minimum fields:
 
 ```python
 {

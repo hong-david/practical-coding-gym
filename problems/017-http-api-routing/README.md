@@ -41,7 +41,7 @@ PATCH  /tasks/<task_id>
 DELETE /tasks/<task_id>
 ```
 
-Project shape:
+Project responses include these minimum fields:
 
 ```python
 {
@@ -50,7 +50,7 @@ Project shape:
 }
 ```
 
-Task shape:
+Task responses include these minimum fields:
 
 ```python
 {
@@ -101,9 +101,10 @@ task_response = client.post(
 )
 task_response.status_code == 201
 
-client.get(f"/projects/{project['id']}/tasks?status=todo").get_json() == [
-    task_response.get_json()
-]
+tasks = client.get(f"/projects/{project['id']}/tasks?status=todo").get_json()
+
+tasks[0]["id"] == task_response.get_json()["id"]
+tasks[0]["status"] == "todo"
 ```
 
 ## Level 1 MVP

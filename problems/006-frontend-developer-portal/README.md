@@ -19,7 +19,7 @@ login, auth_headers, create_initial_state, reducer, fetch_all_pages, update_reso
 
 ## Input/output shape
 
-State dictionaries have this shape:
+State dictionaries have these minimum fields:
 
 ```python
 {

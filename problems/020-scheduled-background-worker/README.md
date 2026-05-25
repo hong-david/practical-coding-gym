@@ -33,7 +33,7 @@ The fake clock must expose:
 clock.now() -> number
 ```
 
-Jobs are dictionaries:
+Jobs are dictionaries with these minimum fields:
 
 ```python
 {

@@ -33,7 +33,7 @@ Orders are dictionaries:
 }
 ```
 
-The intended output shape for `summarize_orders(orders)` is:
+The intended output for `summarize_orders(orders)` is a compact summary:
 
 ```python
 {
@@ -69,11 +69,11 @@ orders = [
     {"customer": "Acme", "quantity": 1, "price": 5.00, "status": "cancelled"},
 ]
 
-summarize_orders(orders) == {
-    "total": 10.00,
-    "customers": {"Acme": 10.00},
-    "count": 1,
-}
+summary = summarize_orders(orders)
+
+summary["total"] == 10.00
+summary["customers"] == {"Acme": 10.00}
+summary["count"] == 1
 
 orders[0]  # should not be mutated
 ```

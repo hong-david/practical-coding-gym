@@ -33,7 +33,7 @@ class LedgerService:
 
 ## Input/output shape
 
-Accounts are dictionaries:
+Accounts are dictionaries with these minimum fields:
 
 ```python
 {
@@ -46,7 +46,7 @@ Accounts are dictionaries:
 }
 ```
 
-Transfers are dictionaries:
+Transfers are dictionaries with these minimum fields:
 
 ```python
 {
