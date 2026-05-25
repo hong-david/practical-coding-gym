@@ -21,7 +21,74 @@ reconcile_transaction_files(internal_filepath: str, provider_filepath: str) -> d
 
 ## Input/output shape
 
-Internal fields: transaction_id,date,amount,currency,description. Provider fields: provider_id,date,amount,currency,description. Return matched, missing_from_provider, missing_from_internal, amount_mismatches, duplicate_internal, duplicate_provider, optional malformed sections, and summary counts.
+Internal CSV fields:
+
+```txt
+transaction_id,date,amount,currency,description
+```
+
+Provider CSV fields:
+
+```txt
+provider_id,date,amount,currency,description
+```
+
+Both APIs return the same result shape:
+
+```python
+{
+    "matched": [
+        {
+            "internal": {...},
+            "provider": {...},
+        },
+    ],
+    "missing_from_provider": [
+        {"transaction_id": "int-2", ...},
+    ],
+    "missing_from_internal": [
+        {"provider_id": "prov-3", ...},
+    ],
+    "amount_mismatches": [
+        {
+            "internal": {...},
+            "provider": {...},
+            "internal_amount": "10.00",
+            "provider_amount": "11.00",
+        },
+    ],
+    "duplicate_internal": [
+        {"transaction_id": "int-2", ...},
+    ],
+    "duplicate_provider": [
+        {"provider_id": "prov-2", ...},
+    ],
+    "malformed_internal": [
+        {"line_number": 3, "raw": "bad,row", "error": "..."},
+    ],
+    "malformed_provider": [
+        {"line_number": 3, "raw": "bad,row", "error": "..."},
+    ],
+    "summary": {
+        "internal_count": 0,
+        "provider_count": 0,
+        "matched_count": 0,
+        "missing_from_provider_count": 0,
+        "missing_from_internal_count": 0,
+        "amount_mismatch_count": 0,
+        "duplicate_internal_count": 0,
+        "duplicate_provider_count": 0,
+        "malformed_internal_count": 0,
+        "malformed_provider_count": 0,
+    },
+}
+```
+
+`reconcile_transactions(...)` parses and reconciles CSV text directly.
+
+`reconcile_transaction_files(...)` reads both files, raises a clear `FileNotFoundError` if either path is missing, and otherwise returns the same dictionary shape as `reconcile_transactions(...)`.
+
+The provided tests require the top-level keys and summary counts above. The exact fields inside list entries can be richer, but they should include enough source record detail to debug why each row landed in that bucket.
 
 ## Level 1 MVP
 
