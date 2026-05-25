@@ -1,0 +1,3 @@
+{"event_id":"e1","timestamp":"2026-05-01T10:00:00Z","user_id":"u1","event_type":"view","value":"0"}
+{"event_id":"e2","timestamp":"2026-05-01T10:00:01Z","user_id":"u1","event_type":"purchase","value":"12.50"}
+{"event_id":"e3","timestamp":"2026-05-01T10:00:02Z","user_id":"u2","event_type":"view","value":"0"}

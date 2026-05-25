@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "id": "sku-1", "name": "Keyboard", "price": "99.99", "quantity": 1 },
+    { "id": "sku-2", "name": "Mouse", "price": "49.50", "quantity": 2 }
+  ]
+}

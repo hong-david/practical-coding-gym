@@ -26,7 +26,7 @@ practical-coding-gym/
         001-log-analyzer/
         002-csv-transaction-reconciler/
         ...
-        015-code-review-lab/
+        021-frontend-cart-component/
 ```
 
 Each problem generally follows:
@@ -45,6 +45,8 @@ problems/<number>-<slug>/
             README.md
 ```
 
+Some frontend-focused problems may also include a local `package.json` and JavaScript test command in that problem's README.
+
 ## Problems
 
 - 001 Log Analyzer
@@ -62,6 +64,12 @@ problems/<number>-<slug>/
 - 013 Background Job Queue
 - 014 Search and Ranking Service
 - 015 Code Review Lab
+- 016 SQL Ledger Service
+- 017 HTTP API Routing
+- 018 Streaming Event Processor
+- 019 Thread-Safe Ledger
+- 020 Scheduled Background Worker
+- 021 Frontend Cart Component
 
 ## Running Tests
 

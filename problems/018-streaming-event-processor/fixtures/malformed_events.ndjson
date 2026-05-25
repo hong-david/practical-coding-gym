@@ -1,0 +1,4 @@
+{"event_id":"e1","timestamp":"2026-05-01T10:00:00Z","user_id":"u1","event_type":"view"}
+not-json
+{"event_id":"e2","timestamp":"2026-05-01T10:00:01Z","user_id":"u1"}
+
