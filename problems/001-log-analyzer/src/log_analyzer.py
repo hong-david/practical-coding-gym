@@ -8,7 +8,7 @@ ALLOWED_METHODS = {
     "HEAD",
 }
 
-def _analyzed_log_base_format():
+def _empty_summary():
     return {
         "total_lines": 0,
         "valid_lines": 0,
@@ -77,7 +77,7 @@ def _parse_line(fields):
     }
 
 def analyze_log_text(text):
-    response = _analyzed_log_base_format()
+    response = _empty_summary()
     for line in text.splitlines():
         _process_line(line, response)
     return response

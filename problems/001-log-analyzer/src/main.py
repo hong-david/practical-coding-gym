@@ -3,12 +3,12 @@ import sys
 
 def main():
     if len(sys.argv) != 2:
-        print('Error: requires 2 arguments')
+        print('Usage: python problems/001-log-analyzer/src/main.py <log-file>', file=sys.stderr)
         sys.exit(1)
     try:
         filepath = sys.argv[1]
-        analyzedLogFile = analyze_log_file(filepath)
-        print(analyzedLogFile)
+        summary = analyze_log_file(filepath)
+        print(summary)
     except FileNotFoundError as error:
         print(f'Error: {error}', file=sys.stderr)
         sys.exit(1)
