@@ -49,6 +49,22 @@ Expected errors:
 - missing `clock.now` raises `TypeError`
 - blank user IDs raise `ValueError`
 
+Example expected behavior:
+
+```python
+clock = FakeClock(now=0)
+limiter = FixedWindowRateLimiter(limit=2, window_seconds=60, clock=clock)
+
+limiter.allow("alice") is True
+limiter.allow("alice") is True
+limiter.allow("alice") is False
+
+limiter.allow("bob") is True
+
+clock.advance(60)
+limiter.allow("alice") is True
+```
+
 ## Level 1 MVP
 
 Track request counts per user per window.

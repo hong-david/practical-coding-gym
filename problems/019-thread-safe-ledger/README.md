@@ -82,6 +82,27 @@ Expected errors:
 
 Concurrent operations must preserve total balances and avoid deadlocks.
 
+Example expected behavior:
+
+```python
+ledger = ThreadSafeLedger()
+ledger.create_account("a", Decimal("100.00"))
+ledger.create_account("b", Decimal("25.00"))
+
+ledger.transfer("a", "b", Decimal("10.00")) == {
+    "from_account_id": "a",
+    "to_account_id": "b",
+    "amount": Decimal("10.00"),
+    "from_balance": Decimal("90.00"),
+    "to_balance": Decimal("35.00"),
+}
+
+ledger.snapshot() == {
+    "a": Decimal("90.00"),
+    "b": Decimal("35.00"),
+}
+```
+
 ## Level 1 MVP
 
 Support account creation, deposit, withdraw, transfer, and balance lookup.

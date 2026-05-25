@@ -69,6 +69,24 @@ Expected errors:
 - non-positive `limit` raises `ValueError`
 - negative `offset` raises `ValueError`
 
+Example expected behavior:
+
+```python
+search = SearchService()
+search.add_document("1", "Python Guide", "Learn testing", tags=["python"])
+search.add_document("2", "Testing", "Python pytest tips", tags=["python", "testing"])
+
+results = search.search("python", tags=["testing"])
+
+results == [
+    {
+        "doc_id": "2",
+        "title": "Testing",
+        "score": 2,
+    },
+]
+```
+
 ## Level 1 MVP
 
 Index documents and search title/body tokens case-insensitively.

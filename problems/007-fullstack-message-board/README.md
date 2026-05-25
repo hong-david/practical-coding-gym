@@ -65,6 +65,20 @@ Expected errors:
 
 Returned dictionaries/lists must be copies, not references to internal state.
 
+Example expected behavior:
+
+```python
+board = MessageBoard()
+
+alice = board.create_user("alice")
+post = board.create_post(alice["id"], "Hello", "First post")
+comment = board.add_comment(alice["id"], post["id"], "Nice")
+
+board.list_posts(limit=10, offset=0)[0]["id"] == post["id"]
+board.delete_comment(alice["id"], comment["id"]) is True
+board.delete_post(alice["id"], post["id"]) is True
+```
+
 ## Level 1 MVP
 
 Create users/posts/comments and list posts with pagination.

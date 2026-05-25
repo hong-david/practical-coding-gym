@@ -59,6 +59,16 @@ Expected errors:
 
 The starter implementation is ugly and mostly working, but it does not yet satisfy the new feature/user validation tests.
 
+Example expected behavior:
+
+```python
+calculate_price("starter", 1) == 19
+calculate_price("starter", 3) == 29
+calculate_price("starter", 1, "SAVE10") == 17.1
+calculate_price("pro", 1, "SAVE10", renewing=True) == 41.9
+calculate_price("starter", 1, "ANNUAL20") == 15.2
+```
+
 ## Level 1 MVP
 
 Lock down existing behavior before refactoring.

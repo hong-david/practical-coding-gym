@@ -50,6 +50,22 @@ Expected errors:
 
 - zero or negative capacity raises `ValueError`
 
+Example expected behavior:
+
+```python
+cache = LRUCache(2)
+
+cache.put("a", 1)
+cache.put("b", 2)
+cache.get("a") == 1  # "a" is now most recently used
+
+cache.put("c", 3)    # evicts "b"
+
+cache.get("b") is None
+cache.get("a") == 1
+cache.get("c") == 3
+```
+
 ## Level 1 MVP
 
 Support basic get/put and eviction.

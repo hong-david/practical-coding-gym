@@ -76,6 +76,24 @@ Expected errors:
 
 Timeout failures are represented with `JobTimeoutError`.
 
+Example expected behavior:
+
+```python
+clock = FakeClock(now=100)
+worker = ScheduledWorker(clock, max_attempts=2)
+
+job = worker.enqueue_in("email", {"to": "a@example.com"}, delay_seconds=30)
+job["run_at"] == 130
+
+worker.run_due({"email": lambda payload: "sent"}) == []
+
+clock.advance(30)
+results = worker.run_due({"email": lambda payload: "sent"})
+
+results[0]["id"] == job["id"]
+results[0]["status"] == "completed"
+```
+
 ## Level 1 MVP
 
 Enqueue delayed jobs, run only due jobs, execute handlers, complete successful jobs, and expose job status.
